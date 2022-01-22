@@ -48,7 +48,7 @@ class Decoder(nn.Module):
         elif self.attention_type == "Hierarchical-attention":
             self.attention = HierarchicalAttention(hidden_size, output_size)    
         else:
-            pass
+            raise ValueError('Undefined attention type')
         self.fc = nn.Linear(hidden_size * 2, hidden_size)
         self.out = nn.Linear(hidden_size * 2, output_size) 
         self.sig = nn.Sigmoid()
