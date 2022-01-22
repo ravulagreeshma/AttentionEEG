@@ -144,6 +144,7 @@ def trainer(
 #     console.log(f"[Saving Model]...\n")
 #     # Saving the model after training
 #     # path = os.path.join(output_dir, "model_files")
+
     evaluate(model, val_loader, model_params["BEST_CLASS_WEIGHTS"])
 
 def evaluate(model, loader, best_class_weights):

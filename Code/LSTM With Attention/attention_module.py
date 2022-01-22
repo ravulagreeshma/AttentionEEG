@@ -188,7 +188,6 @@ class HierarchicalAttention(nn.Module):
     def forward(self, hidden_dim, x):
         out, h = self.gru(x)
         out = self.fc(self.relu(out))
-        # print("OUT: ",out.shape)
         return out.permute(1,2,0)
     
     def init_hidden(self, batch_size):
