@@ -121,15 +121,15 @@ def trainer(
     
     if model_params["MODEL"] == "Self-attention" or model_params["MODEL"] == "Hierarchical-attention":
         model_params["WEIGHT_TRAIN_LOSS"] = model_params["WEIGHT_VAL_LOSS"] = -0.001
-        model_params["BEST_CLASS_WEIGHTS"] = [10,8,94,48]
+        model_params["BEST_CLASS_WEIGHTS"] = [10, 8, 94, 48]
     elif model_params["MODEL"] == "Soft-attention":
         model_params["WEIGHT_TRAIN_LOSS"] = -0.002
         model_params["WEIGHT_VAL_LOSS"] = -0.001
-        model_params["BEST_CLASS_WEIGHTS"] = [9.5,0.8,5.3]
+        model_params["BEST_CLASS_WEIGHTS"] = [9.5, 0.8, 9.5, 5.3]
     elif model_params["MODEL"] == "Hard-attention":
         model_params["WEIGHT_TRAIN_LOSS"] = 1
         model_params["WEIGHT_VAL_LOSS"] = 1
-        model_params["BEST_CLASS_WEIGHTS"] = [1.5,1.35]     
+        model_params["BEST_CLASS_WEIGHTS"] = [1.5, 1.35, 1.35, 1.35]     
     else:
         pass
 
