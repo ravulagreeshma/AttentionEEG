@@ -12,7 +12,7 @@ model_params = {
     "STIM": "Arousal", #Arousal/ Valence/ All
     "BATCH_SIZE": 12,  # batch size
     "EPOCHS": 1,  # number of training epochs
-    "LEARNING_RATE": 0.01,  # learning rate
+    "LEARNING_RATE": 0.001,  # learning rate
 }
 
 #getting the encoder layer with below units
