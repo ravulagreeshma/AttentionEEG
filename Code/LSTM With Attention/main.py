@@ -1,23 +1,9 @@
 import torch
-from torch import nn
-import torch.nn.functional as F
-
-import os
-import pickle
-import numpy as np
-import math
-
-# from dataset import Dataset
 from model import Encoder, Decoder, Seq2Seq
-
-import warnings
-warnings.filterwarnings("ignore")
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
-
 from train import trainer
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print("configured device: ", device)
+print("Configured device: ", device)
 
 path = "../../../datasets/data_preprocessed_python"
 
@@ -31,7 +17,7 @@ dec = Decoder(256, 1).to(device)
 model = Seq2Seq(enc, dec).to(device)
 
 model_params = {
-    "MODEL": "Soft-attention", # Self-attention, Soft-attention
+    "MODEL": "Self-attention", # Self-attention, Soft-attention
     "STIM": "Arousal", #Arousal/ Valence/ All
     "BATCH_SIZE": 12,  # batch size
     "EPOCHS": 15,  # number of training epochs
