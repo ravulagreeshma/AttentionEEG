@@ -68,7 +68,7 @@ class Attn(nn.Module):
 
 class SoftAttention(nn.Module):
     def __init__(self, encoder_hidden_dim):
-        super(SoftAttention).__init__()
+        super(SoftAttention, self).__init__()
         print("SOFT ATTENTION")
         # The input dimension will the the concatenation of
         # encoder_hidden_dim (hidden) and  decoder_hidden_dim(encoder_outputs)

@@ -8,7 +8,7 @@ print("Configured device: ", device)
 path = "../../../datasets/data_preprocessed_python"
 
 model_params = {
-    "MODEL": "Hierarchical-attention", # Self-attention, Soft-attention, Hard-attention, #Hierarchical-attention
+    "MODEL": "Hard-attention", # Self-attention, Soft-attention, Hard-attention, #Hierarchical-attention
     "STIM": "Arousal", #Arousal/ Valence/ All
     "BATCH_SIZE": 12,  # batch size
     "EPOCHS": 1,  # number of training epochs
