@@ -134,7 +134,7 @@ def trainer(
         pass
 
     
-    print(model_params)
+    # print(model_params)
     # Training loop
     console.log(f"[Initiating Training]...\n")
 

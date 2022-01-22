@@ -7,22 +7,24 @@ print("Configured device: ", device)
 
 path = "../../../datasets/data_preprocessed_python"
 
-#getting the encoder layer with below units
-enc = Encoder(40, 256, 1).to(device)
-
-#getting the decoder layer
-dec = Decoder(256, 1).to(device)
-
-#connecting them with seq2seq and getting the final model out
-model = Seq2Seq(enc, dec).to(device)
-
 model_params = {
-    "MODEL": "Self-attention", # Self-attention, Soft-attention
+    "MODEL": "Soft-attention", # Self-attention, Soft-attention
     "STIM": "Arousal", #Arousal/ Valence/ All
     "BATCH_SIZE": 12,  # batch size
-    "EPOCHS": 15,  # number of training epochs
+    "EPOCHS": 1,  # number of training epochs
     "LEARNING_RATE": 0.001,  # learning rate
 }
 
+#getting the encoder layer with below units
+input_dim = 40
+hidden_dim = 256
+output_dim = 1
+# enc = Encoder(40, 256, 1).to(device)
+
+# #getting the decoder layer
+# dec = Decoder(256, 1).to(device)
+
+#connecting them with seq2seq and getting the final model out
+model = Seq2Seq(input_dim, hidden_dim, output_dim, model_params["MODEL"] ).to(device)
 
 trainer(path = path, model = model, model_params=model_params, device = device,)
