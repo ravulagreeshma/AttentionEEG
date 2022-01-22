@@ -47,6 +47,8 @@ class Decoder(nn.Module):
             self.attention = SelfAttention(hidden_size)
         elif self.attention_type == "Soft-attention":
             self.attention = SoftAttention(hidden_size)
+        elif self.attention_type == "Hard-attention":
+            self.attention = HardAttention(hidden_size)
         else:
             pass
         self.fc = nn.Linear(hidden_size * 2, hidden_size)

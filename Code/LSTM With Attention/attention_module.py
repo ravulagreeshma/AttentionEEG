@@ -68,7 +68,7 @@ class Attn(nn.Module):
 
 class SoftAttention(nn.Module):
     def __init__(self, encoder_hidden_dim):
-        super().__init__()
+        super(SoftAttention).__init__()
         print("SOFT ATTENTION")
         # The input dimension will the the concatenation of
         # encoder_hidden_dim (hidden) and  decoder_hidden_dim(encoder_outputs)
@@ -114,3 +114,37 @@ class SoftAttention(nn.Module):
         # probability distribution
         return F.softmax(attn_scoring_vector, dim=1).unsqueeze(0).permute(2,0,1)
     
+    
+class HardAttention(nn.Module):
+    def __init__(self, hidden_size):
+        super(HardAttention, self).__init__()
+        print("HARD ATTENTION")
+        self.hidden_size = hidden_size
+        self.attn = nn.Linear(self.hidden_size * 2, hidden_size)
+#initializing random hidden size
+        self.v = nn.Parameter(torch.rand(hidden_size))
+        
+
+    def forward(self, hidden, encoder_outputs):
+      #Length of encoder o/p
+        timestep = encoder_outputs.size(0)
+
+      #we have repeate the length of hidden unit
+        h = hidden.repeat(timestep, 1, 1).transpose(0, 1)
+
+      #transposing
+        encoder_outputs = encoder_outputs.transpose(0, 1)  
+  
+  #cat (enc_o/p,hidden_states)
+        temp = torch.cat([h, encoder_outputs], dim=2)
+  #applying linear layer, relu activation fun to calculate attention weights
+        energy = F.relu(self.attn(temp))
+  #reshaping
+        energy = energy.transpose(1, 2) 
+  #Since hidden states are to be picked random, so we are applying v
+        v = self.v.repeat(encoder_outputs.size(0), 1).unsqueeze(1) 
+  #multiplying with energies 
+        energy = torch.bmm(v, energy)
+        attn_energies = energy.squeeze(1)
+  #applying siftmax_fun
+        return F.softmax(attn_energies, dim=1).unsqueeze(1)
