@@ -148,3 +148,51 @@ class HardAttention(nn.Module):
         attn_energies = energy.squeeze(1)
   #applying siftmax_fun
         return F.softmax(attn_energies, dim=1).unsqueeze(1)
+
+class _HierarchicalAttention(nn.Module):
+    def __init__(self,output_size, hidden_dim, n_layers=1):
+        super(_HierarchicalAttention, self).__init__()
+
+        self.hidden_dim = hidden_dim
+        self.n_layers = n_layers
+#Encoder outputs are sent into decoder as ip to GRU
+        self.gru = nn.GRU(hidden_dim, hidden_dim, n_layers, batch_first=True, dropout=0.2)
+        self.fc = nn.Linear(hidden_dim, output_size).float()
+        self.tanh = nn.Tanh()
+        
+    def forward(self, x,hidden_dim):
+      #GRU:o/p, hidden matrix
+        out, h = self.gru(x)
+      #o/p-tanh fun
+        out = self.fc(self.tanh(out))
+        return out
+
+#weights are been reshaped accordingly in order to be sent to next layer    
+    def init_hidden(self, batch_size):
+        weight = next(self.parameters()).data
+        hidden = weight.new(self.n_layers, batch_size, self.hidden_dim).zero_()
+        
+        return hidden
+
+class HierarchicalAttention(nn.Module):
+    def __init__(self, hidden_dim, output_size, n_layers=1):
+        super(HierarchicalAttention, self).__init__()
+
+        self.hidden_dim = hidden_dim
+        self.n_layers = n_layers
+
+        self.gru = nn.GRU(hidden_dim, hidden_dim, n_layers, batch_first=True, dropout=0.2)
+        self.fc = nn.Linear(hidden_dim, output_size).float()
+        self.relu = nn.ReLU()
+        
+    def forward(self, hidden_dim, x):
+        out, h = self.gru(x)
+        out = self.fc(self.relu(out))
+        # print("OUT: ",out.shape)
+        return out.permute(1,2,0)
+    
+    def init_hidden(self, batch_size):
+        weight = next(self.parameters()).data
+ #instead of taking hidden weights randomly, it calls the above class       
+        hidden = _HierarchicalAttention(weight,hidden_dim)    
+        return hidden

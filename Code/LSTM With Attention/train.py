@@ -119,7 +119,7 @@ def trainer(
     optimizer = torch.optim.AdamW(params=model.parameters(), lr=model_params["LEARNING_RATE"])
     loss_fn = nn.BCELoss() 
     
-    if model_params["MODEL"] == "Self-attention" or model_params["MODEL"] == "Hierachical-attention":
+    if model_params["MODEL"] == "Self-attention" or model_params["MODEL"] == "Hierarchical-attention":
         model_params["WEIGHT_TRAIN_LOSS"] = model_params["WEIGHT_VAL_LOSS"] = -0.001
         model_params["BEST_CLASS_WEIGHTS"] = [10,8,94,48]
     elif model_params["MODEL"] == "Soft-attention":
