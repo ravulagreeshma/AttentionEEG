@@ -8,7 +8,8 @@ print("Configured device: ", device)
 path = "../../../data_preprocessed_python"
 
 model_params = {
-    "MODEL": "Hard-attention", # Self-attention, Soft-attention, Hard-attention, #Hierarchical-attention
+    "MODEL": "Soft-attention", # Self-attention, Soft-attention, Hard-attention, #Hierarchical-attention
+    "LSTM_MERGE_MODE" : 'sum', # concat / sum
     "STIM": "Arousal", #Arousal/ Valence/ All
     "BATCH_SIZE": 12,  # batch size
     "EPOCHS": 2,  # number of training epochs
@@ -25,6 +26,6 @@ output_dim = 1
 # dec = Decoder(256, 1).to(device)
 
 #connecting them with seq2seq and getting the final model out
-model = Encoder(input_dim, hidden_dim, output_dim, model_params["MODEL"] ).to(device)
+model = Encoder(input_dim, hidden_dim, output_dim, model_params["LSTM_MERGE_MODE"], model_params["MODEL"] ).to(device)
 
 trainer(path = path, model = model, model_params=model_params, device = device,)

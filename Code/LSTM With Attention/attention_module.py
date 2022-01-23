@@ -4,12 +4,14 @@ import torch.nn.functional as F
 import math
 
 class SelfAttention(nn.Module):
-    def __init__(self, hidden_size):
+    def __init__(self, hidden_size, lstm_merge_mode):
         super(SelfAttention, self).__init__()
         print("SELF ATTENTION")
         self.hidden_size = hidden_size
-
-        self.attn = nn.Linear(self.hidden_size * 2, hidden_size)
+        if lstm_merge_mode == 'sum':
+            self.attn = nn.Linear(self.hidden_size * 2, hidden_size)
+        if lstm_merge_mode == 'concat':
+            self.attn = nn.Linear(self.hidden_size * 3, hidden_size)
         self.v = nn.Parameter(torch.rand(hidden_size))
         stdv = 1. / math.sqrt(self.v.size(0))
         self.v.data.uniform_(-stdv, stdv)
@@ -67,12 +69,15 @@ class Attn(nn.Module):
         return output
 
 class SoftAttention(nn.Module):
-    def __init__(self, encoder_hidden_dim):
+    def __init__(self, encoder_hidden_dim, lstm_merge_mode):
         super(SoftAttention, self).__init__()
         print("SOFT ATTENTION")
         # The input dimension will the the concatenation of
         # encoder_hidden_dim (hidden) and  decoder_hidden_dim(encoder_outputs)
-        self.attn_hidden_vector = nn.Linear(encoder_hidden_dim *2,encoder_hidden_dim)
+        if lstm_merge_mode == 'sum':
+            self.attn_hidden_vector = nn.Linear(encoder_hidden_dim *2,encoder_hidden_dim)
+        if lstm_merge_mode == 'concat':
+            self.attn_hidden_vector = nn.Linear(encoder_hidden_dim *3,encoder_hidden_dim)
  
         # We need source len number of values for n batch as the dimension
         # of the attention weights. The attn_hidden_vector will have the
@@ -116,11 +121,16 @@ class SoftAttention(nn.Module):
     
     
 class HardAttention(nn.Module):
-    def __init__(self, hidden_size):
+    def __init__(self, hidden_size, lstm_merge_mode):
         super(HardAttention, self).__init__()
         print("HARD ATTENTION")
         self.hidden_size = hidden_size
-        self.attn = nn.Linear(self.hidden_size * 2, hidden_size)
+        
+        if lstm_merge_mode == 'sum' :
+            self.attn = nn.Linear(self.hidden_size * 2, hidden_size)
+        if lstm_merge_mode == 'concat' :
+            self.attn = nn.Linear(self.hidden_size * 3, hidden_size)
+        
 #initializing random hidden size
         self.v = nn.Parameter(torch.rand(hidden_size))
         
@@ -137,6 +147,7 @@ class HardAttention(nn.Module):
   
   #cat (enc_o/p,hidden_states)
         temp = torch.cat([h, encoder_outputs], dim=2)
+        
   #applying linear layer, relu activation fun to calculate attention weights
         energy = F.relu(self.attn(temp))
   #reshaping
@@ -150,7 +161,7 @@ class HardAttention(nn.Module):
         return F.softmax(attn_energies, dim=1).unsqueeze(1)
 
 class _HierarchicalAttention(nn.Module):
-    def __init__(self,output_size, hidden_dim, n_layers=1):
+    def __init__(self, output_size, hidden_dim, n_layers=1):
         super(_HierarchicalAttention, self).__init__()
 
         self.hidden_dim = hidden_dim
@@ -175,13 +186,16 @@ class _HierarchicalAttention(nn.Module):
         return hidden
 
 class HierarchicalAttention(nn.Module):
-    def __init__(self, hidden_dim, output_size, n_layers=1):
+    def __init__(self, hidden_dim, output_size, lstm_merge_mode, n_layers=1):
         super(HierarchicalAttention, self).__init__()
 
         self.hidden_dim = hidden_dim
         self.n_layers = n_layers
-
-        self.gru = nn.GRU(hidden_dim, hidden_dim, n_layers, batch_first=True, dropout=0.2)
+        
+        if lstm_merge_mode == 'sum':
+            self.gru = nn.GRU(hidden_dim, hidden_dim, n_layers, batch_first=True, dropout=0.2)
+        if lstm_merge_mode == 'concat':
+            self.gru = nn.GRU(hidden_dim*2, hidden_dim, n_layers, batch_first=True, dropout=0.2)
         self.fc = nn.Linear(hidden_dim, output_size).float()
         self.relu = nn.ReLU()
         
