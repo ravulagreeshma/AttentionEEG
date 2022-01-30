@@ -3,7 +3,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 import numpy as np
-from dataset import Dataset
+from dataset import Dataset, SpecDataset
 from torch.utils.data import DataLoader
 
 import warnings
@@ -34,10 +34,14 @@ def train(model, epoch, train_loader, val_loader,  optimizer, loss_fn, device, m
 
     ## training bathces in gpu
     for i, batch in enumerate(train_loader):
-        data = batch['data'].permute(2, 0, 1).to(device)
+        if model_params['DATA'] == 'eeg':
+            data = batch['data'].to(device).permute(2, 0, 1)
+        else :
+            data = batch['data'].to(device)
         label = batch['label'].to(device)
 
         optimizer.zero_grad()
+        # print(data.shape)
         output = model(data)
         loss = loss_fn(output, label)
             
@@ -52,8 +56,11 @@ def train(model, epoch, train_loader, val_loader,  optimizer, loss_fn, device, m
     with torch.no_grad():
         for i, batch in enumerate(val_loader):
 
-            data = batch['data'].permute(2, 0, 1).cuda()
-            label = batch['label'].cuda()
+            if model_params['DATA'] == 'eeg':
+                data = batch['data'].to(device).permute(2, 0, 1)
+            else :
+                data = batch['data'].to(device)
+            label = batch['label'].to(device)
             output = model(data)
             loss = loss_fn(output, label)
             
@@ -64,7 +71,7 @@ def train(model, epoch, train_loader, val_loader,  optimizer, loss_fn, device, m
     # print('Epoch : {} train_loss : {} val_loss : {}'.format(epoch, (opt_weight*train_loss)/len(train_loader), (opt_weight*val_loss)/len(val_loader))) 
 
 def trainer(
-    path, model, model_params, device
+    path, ds,  model, model_params, device
 ): #  output_dir="outputs", << to save model
 
     """
@@ -73,16 +80,20 @@ def trainer(
     """
 
     # logging
+    
     console.log(f"""[Model]: {model_params["MODEL"]}...\n""")
 
     model = model.to(device)
 
     # logging
-    console.log(f"[Data]: Reading data...\n")
+    console.log(f"""[Data]: Reading data...{model_params["DATA"]}\n""")
     console.log(f"""[STIM]: {model_params["STIM"]}\n""")
-
+    
     # Importing the raw dataset
-    dataset = Dataset(path, model_params["STIM"])
+    if ds == 'eeg':
+        dataset = Dataset(path, model_params["STIM"])
+    if ds == 'spectrogram':
+        dataset = SpecDataset(path, model_params["STIM"])
     
     # Creation of Dataset and Dataloader
     # Defining the train size. So 80% of the data will be used for training and the rest for validation.
@@ -145,17 +156,20 @@ def trainer(
 #     # Saving the model after training
 #     # path = os.path.join(output_dir, "model_files")
 
-    evaluate(model, val_loader, model_params["BEST_CLASS_WEIGHTS"])
+    evaluate(model, val_loader, model_params["BEST_CLASS_WEIGHTS"], model_params, device)
 
-def evaluate(model, loader, best_class_weights):
+def evaluate(model, loader, best_class_weights, model_params, device):
     #Calculating the metrics
     fin_targets = []
     fin_outputs = []
 
     with torch.no_grad():
         for i, batch in enumerate(loader):
-
-            data = batch['data'].permute(2, 0, 1).cuda()
+            if model_params['DATA'] == 'eeg':
+                data = batch['data'].to(device).permute(2, 0, 1)
+            else :
+                data = batch['data'].to(device)
+            
             label = batch['label']
             output = model(data)
             fin_targets.append(np.asarray(label.numpy(),dtype=np.int))
