@@ -34,7 +34,7 @@ class Dataset(torch.utils.data.Dataset):
    
     def __getitem__(self, idx):
         single_data = self.data[idx]
-        single_label = self.label[idx].astype(float)
+        single_label = (self.label[idx] > 5).astype(float)
         
         batch = {
             'data': torch.Tensor(single_data),
@@ -75,7 +75,7 @@ class DatasetSpectogram(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         single_data = self.data[idx]
         
-        single_label = self.label[idx].astype(float)
+        single_label = (self.label[idx] > 5).astype(float)
         
         batch = {
             'data': torch.Tensor(single_data),
