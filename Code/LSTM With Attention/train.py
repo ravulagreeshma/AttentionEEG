@@ -41,13 +41,11 @@ def train(model, epoch, train_loader, val_loader,  optimizer, loss_fn, device, m
         label = batch['label'].to(device)
 
         optimizer.zero_grad()
-        # print(data.shape)
         output = model(data)
         loss = loss_fn(output, label)
             
         loss.backward()
         optimizer.step()
-
         train_loss += loss.item()
 
     ## evaluating the trained model on validation set
@@ -144,8 +142,6 @@ def trainer(
     else:
         pass
 
-    
-    # print(model_params)
     # Training loop
     console.log(f"[Initiating Training]...\n")
 
@@ -174,7 +170,7 @@ def evaluate(model, loader, best_class_weights, model_params, device):
             output = model(data)
             fin_targets.append(np.asarray(label.numpy(),dtype=np.int))
             fin_outputs.append(np.asarray((output.cpu().detach().numpy()>0.5), dtype=np.int))
-    acc,precision,recall,f1score=classification_report(fin_outputs,fin_targets,best_class_weights)
+    acc, precision,recall,f1score=classification_report(fin_outputs,fin_targets,best_class_weights)
     print('Accuracy : {}'.format(acc))
     print('Precision: {}'.format(precision))
     print('Recall: {}'.format(recall))

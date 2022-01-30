@@ -33,7 +33,7 @@ class Dataset(torch.utils.data.Dataset):
 
    
     def __getitem__(self, idx):
-        single_data = self.data[idx]
+        single_data  = self.data[idx]
         single_label = (self.label[idx] > 5).astype(float)
         
         batch = {

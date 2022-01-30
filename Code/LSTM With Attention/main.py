@@ -9,9 +9,9 @@ path = "../../../data_preprocessed_python"
 
 model_params = {
     "DATA" : "eeg", # eeg / spectrogram
-    "LSTM_MERGE_MODE" : 'sum', # concat / sum
+    "LSTM_MERGE_MODE" : 'concat', # concat / sum
     "STIM": "Arousal", #Arousal/ Valence/ All
-    "MODEL": "Soft-attention", # Self-attention, Soft-attention, Hard-attention, #Hierarchical-attention
+    "MODEL": "Self-attention", # Self-attention, Soft-attention, Hard-attention, #Hierarchical-attention
     "BATCH_SIZE": 12,  # batch size
     "EPOCHS": 15,  # number of training epochs
     "LEARNING_RATE": 0.001,  # learning rate
@@ -21,9 +21,8 @@ model_params = {
 input_dim = 40
 hidden_dim = 128
 output_dim = 1
-# enc = Encoder(40, 256, 1).to(device)
 
-# #getting the decoder layer
+# enc = Encoder(40, 256, 1).to(device)
 # dec = Decoder(256, 1).to(device)
 
 if model_params["DATA"] == "eeg":
