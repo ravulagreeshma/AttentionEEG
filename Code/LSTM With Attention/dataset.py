@@ -17,15 +17,19 @@ class Dataset(torch.utils.data.Dataset):
             temp = pickle.load(open(os.path.join(path,dat), 'rb'), encoding='latin1')
             all_data.append(temp['data'])
             
-            if stim == "Valence":
+            if stim == "Valence": # 1 : (270,), 0 :(206,)
                 all_label.append(temp['labels'][:,:1])
-            elif stim == "Arousal":
+            elif stim == "Arousal": # 1 : (256,), 0 :(221,)
                 all_label.append(temp['labels'][:,1:2]) # Arousal
-            else:
-                all_label.append(temp['labels'][:,:2]) # All
+            # else:
+            #     all_label.append(temp['labels'][:,:2]) # All
                 
         self.data = np.vstack(all_data)
         self.label = np.vstack(all_label)
+        
+        # print(self.label[self.label>5].shape)
+        # print(self.label[self.label<5].shape)
+        
         del temp, all_data, all_label
 
     def __len__(self):

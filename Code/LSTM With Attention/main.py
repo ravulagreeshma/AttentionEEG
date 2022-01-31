@@ -10,7 +10,7 @@ path = "../../../data_preprocessed_python"
 model_params = {
     "DATA" : "eeg", # eeg / spectrogram
     "LSTM_MERGE_MODE" : 'concat', # concat / sum
-    "STIM": "Arousal", #Arousal/ Valence/ All
+    "STIM": "Valence", #Arousal / Valence
     "MODEL": "Self-attention", # Self-attention, Soft-attention, Hard-attention, #Hierarchical-attention
     "BATCH_SIZE": 12,  # batch size
     "EPOCHS": 15,  # number of training epochs
